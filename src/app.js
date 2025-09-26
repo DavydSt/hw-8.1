@@ -2,7 +2,7 @@ const input = document.querySelector("#bookmarkInput");
 const addBtn = document.querySelector("#addBookmarkBtn");
 const listRef = document.querySelector("#bookmarkList");
 
-let urlList = [];
+let urlList = JSON.parse(localStorage.getItem("url")) || [];
 
 const render = function () {
   listRef.innerHTML = urlList
@@ -16,18 +16,21 @@ const render = function () {
     .join("");
 };
 
+const save = function () {
+  localStorage.setItem("url", JSON.stringify(urlList));
+  render();
+};
+
 addBtn.addEventListener("click", () => {
   const url = input.value.trim();
-  // console.log(url);
   if (url) {
     urlList.push(url);
     input.value = "";
-    render();
+    save();
   }
 });
 
 listRef.addEventListener("click", (event) => {
-  // console.log(event.target.nodeName);
   const index = event.target.dataset.index;
   if (event.target.nodeName !== "BUTTON") {
     return;
@@ -36,11 +39,34 @@ listRef.addEventListener("click", (event) => {
     const newUrl = prompt("редагуйте поселання!", urlList[index]);
     if (newUrl) {
       urlList[index] = newUrl;
-      render();
+      save();
     }
   }
   if (event.target.classList.contains("delete")) {
     urlList.splice(index, 1);
-    render();
+    save();
   }
+});
+render();
+
+// -=-  //
+
+const userName = document.querySelector("#username");
+const passWord = document.querySelector("#password");
+const saveBtn = document.querySelector("#saveBtn");
+
+userName.value = localStorage.getItem("user") || "";
+passWord.value = localStorage.getItem("passwort") || "";
+
+userName.addEventListener("input", () => {
+  return localStorage.setItem("userName", userName.value);
+});
+passWord.addEventListener("input", () => {
+  return localStorage.setItem("passWord", passWord.value);
+});
+passWord.addEventListener("click", () => {
+  localStorage.removeItem("userName");
+  localStorage.removeItem("passWort");
+  userName.value = "";
+  passWord.value = "";
 });
